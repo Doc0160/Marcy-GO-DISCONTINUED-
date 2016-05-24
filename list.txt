@@ -1,0 +1,20 @@
+html css xml
+javascript json
+php 
+c
+c++
+c#
+go~
+java
+perl
+brainfuck
+ruby
+python
+asm
+lua
+basic
+vb.net
+bash
+vbscript
+sql
+nosql
