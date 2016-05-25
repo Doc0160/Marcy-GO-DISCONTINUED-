@@ -7,7 +7,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 func main() {
-	marcy.Init("xoxb-20711630562-YRp4UgH60905Ad4FdKWauigm")
+	marcy := NewMarcy("xoxb-20711630562-YRp4UgH60905Ad4FdKWauigm")
 	//
 	var xkcd = newXkcd(marcy.cmds.CT.TinyJsonDB, &marcy.cmds.CT)
 	marcy.Handler("g", giphy, "giphy", "");
@@ -42,21 +42,4 @@ func main() {
 	}, "Totalement pas copié de \"(tars/case) nouveau prosit\".", "")
 	//
 	marcy.Loop()
-}
-// Send a typing event in the channel specfied in the incomming message
-func Typing(ws *websocket.Conn, s Slack.OMNI) {
-	websocket.JSON.Send(ws, Slack.Typing{
-		ID:      time.Now().String(),
-		Type:    "typing",
-		Channel: s.Channel,
-	})
-}
-// Send a message event in the channel specfied in the incomming message
-func Message(ws *websocket.Conn, s Slack.OMNI, text string) {
-	websocket.JSON.Send(ws, Slack.Message{
-		ID:      time.Now().String(),
-		Type:    "message",
-		Channel: s.Channel,
-		Text:    text,
-	})
 }

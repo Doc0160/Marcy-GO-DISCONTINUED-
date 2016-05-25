@@ -4,9 +4,28 @@ import(
 	"fmt"
 	"golang.org/x/net/websocket" // TODO(doc): use smthg better or custom
 )
-var marcy Marcy
 type Marcy struct{
 	cmds Commands
+}
+func NewMarcy(token string)Marcy{
+	var m Marcy
+	var err error
+	m.cmds, err = NewCommands(token)
+	if err!=nil{
+		panic(err.Error())
+	}else{
+		//fmt.Println(m.cmds.CT.Slack.RTM.URL)
+		//
+		//
+		m.cmds.Handler("exit", func(*CT, Slack.OMNI){
+			// TODO(doc): gracefull exit
+		},"","")
+		//m.cmds.Handler("g", giphy, "giphy", "")
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return Marcy{};
 }
 //"xoxb-20711630562-YRp4UgH60905Ad4FdKWauigm"
 func (m *Marcy)Loop(){
@@ -70,21 +89,20 @@ func (m *Marcy)Loop(){
 func (m*Marcy)Handler(n string, f func(*CT, Slack.OMNI), QHelp string, Help string){
 	m.cmds.Handler(n, f, QHelp, Help);
 }
-func (m *Marcy)Init(token string){
-	var err error
-	m.cmds, err = NewCommands(token)
-	if err!=nil{
-		println(err.Error())
-	}else{
-		//fmt.Println(m.cmds.CT.Slack.RTM.URL)
-		//
-		//
-		m.cmds.Handler("exit", func(*CT, Slack.OMNI){
-			// TODO(doc): gracefull exit
-		},"","")
-		//m.cmds.Handler("g", giphy, "giphy", "")
-		if err != nil {
-			panic(err.Error())
-		}
-	}
+// Send a typing event in the channel specfied in the incomming message
+func Typing(ws *websocket.Conn, s Slack.OMNI) {
+	websocket.JSON.Send(ws, Slack.Typing{
+		ID:      time.Now().String(),
+		Type:    "typing",
+		Channel: s.Channel,
+	})
+}
+// Send a message event in the channel specfied in the incomming message
+func Message(ws *websocket.Conn, s Slack.OMNI, text string) {
+	websocket.JSON.Send(ws, Slack.Message{
+		ID:      time.Now().String(),
+		Type:    "message",
+		Channel: s.Channel,
+		Text:    text,
+	})
 }

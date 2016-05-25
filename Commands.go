@@ -23,8 +23,8 @@ func NewCommands(token string)(Commands,error){
 }
 type Command struct{
 	Command map[string]func(*CT, Slack.OMNI)
-	QHelp    map[string]string
-	Help     map[string]string
+	QHelp   map[string]string
+	Help    map[string]string
 }
 type Commands struct {
 	Commands map[string]func(*CT, Slack.OMNI)
