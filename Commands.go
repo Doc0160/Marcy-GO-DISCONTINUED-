@@ -1,9 +1,9 @@
 package main
 import (
-	"fmt"
+	// "fmt"
 	"TinyJsonDB"
 	"math/rand"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"time"
 	"golang.org/x/net/websocket"
 )
@@ -16,14 +16,14 @@ func NewCommands(token string)(Commands,error){
 	if err!=nil{
 		return c,err
 	}
-	fmt.Println(c.CT.Slack);
+	println(c.CT.Slack.RTM.URL)
 	c.CT.Websocket, err = websocket.Dial(c.CT.Slack.RTM.URL, "", "https://slack.com/")
 	c.CT.Random = rand.New(rand.NewSource(time.Now().Unix()))
 	return c,err
 }
 type Command struct{
-	Command map[string]func(*CT, Slack.OMNI)
-	QHelp   map[string]string
+	Command func(*CT, Slack.OMNI)
+	QHelp   string
 	Help    map[string]string
 }
 type Commands struct {

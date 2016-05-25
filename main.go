@@ -2,12 +2,12 @@ package main
 import (
 	// "math/rand"
 	// "fmt"
-	"slack"
-	"time"
-	"golang.org/x/net/websocket"
+	"github.com/Doc0160/Marcy/slack"
+	// "time"
+	// "golang.org/x/net/websocket"
 )
 func main() {
-	marcy := NewMarcy("xoxb-20711630562-YRp4UgH60905Ad4FdKWauigm")
+	marcy := NewMarcy("xoxb-20711630562-wCiSqYyVp854Wga2bO3kuLR9")
 	//
 	var xkcd = newXkcd(marcy.cmds.CT.TinyJsonDB, &marcy.cmds.CT)
 	marcy.Handler("g", giphy, "giphy", "");

@@ -1,33 +1,30 @@
 package main
 import(
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"fmt"
+	"time"
 	"golang.org/x/net/websocket" // TODO(doc): use smthg better or custom
 )
 type Marcy struct{
-	cmds Commands
+	cmds *Commands
 }
 func NewMarcy(token string)Marcy{
 	var m Marcy
 	var err error
-	m.cmds, err = NewCommands(token)
+	cmds, err := NewCommands(token)
+	m.cmds = &cmds
 	if err!=nil{
 		panic(err.Error())
 	}else{
-		//fmt.Println(m.cmds.CT.Slack.RTM.URL)
-		//
-		//
 		m.cmds.Handler("exit", func(*CT, Slack.OMNI){
 			// TODO(doc): gracefull exit
 		},"","")
-		//m.cmds.Handler("g", giphy, "giphy", "")
 		if err != nil {
 			panic(err.Error())
 		}
 	}
-	return Marcy{};
+	return m;
 }
-//"xoxb-20711630562-YRp4UgH60905Ad4FdKWauigm"
 func (m *Marcy)Loop(){
 	for true {
 		var recv Slack.OMNI
@@ -41,7 +38,7 @@ func (m *Marcy)Loop(){
 					if m.cmds.Commands[e[0]] != nil {
 						if len(e) > 1 && (e[1] == "h" || e[1] == "help") {
 							if m.cmds.Help[e[0]] == "" {
-								Message(m.cmds.CT.Websocket, recv, "// TODO: help_text")
+								Message(m.cmds.CT.Websocket, recv, m.cmds.QHelp[e[0]])
 							} else {
 								Message(m.cmds.CT.Websocket, recv, m.cmds.Help[e[0]])
 							}
@@ -78,9 +75,7 @@ func (m *Marcy)Loop(){
 		case "":
 			if recv.OK != nil && *recv.OK == false {
 				fmt.Println("OK:", recv.OK, recv.Error)
-			} /*else {
-				println("All good !")
-			}*/
+			}
 		default:
 			fmt.Println(recv)
 		}

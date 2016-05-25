@@ -3,7 +3,7 @@ import (
 	// "fmt"
 	"encoding/json"
 	"net/http"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"strconv"
 	"time"
 )

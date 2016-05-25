@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"runtime/debug"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	// "golang.org/x/net/websocket"
 )
 

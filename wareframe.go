@@ -1,6 +1,6 @@
 package main
 import (
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"github.com/SlyMarbo/rss"
 )
 func doWarframeAlert(ct *CT, s Slack.OMNI) {
