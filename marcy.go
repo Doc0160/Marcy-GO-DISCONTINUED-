@@ -1,22 +1,43 @@
 package main
 import(
-	"github.com/Doc0160/Marcy/slack"
 	"fmt"
 	"time"
+	"github.com/Doc0160/Marcy/slack"
 	"golang.org/x/net/websocket" // TODO(doc): use smthg better or custom
+	"TinyJsonDB"
+	"math/rand"
 )
 type Marcy struct{
-	cmds *Commands
+	//cmds Commands
+	Commands map[string]Command
+	CT CT
+}
+type Command struct{
+	Command func(*CT, Slack.OMNI)
+	QHelp   string
+	Help    string
+}
+type CT struct {
+	Websocket  *websocket.Conn
+	Slack      Slack.Slack
+	TinyJsonDB *TinyJsonDB.TinyJsonDB
+	Random     *rand.Rand
 }
 func NewMarcy(token string)Marcy{
 	var m Marcy
 	var err error
-	cmds, err := NewCommands(token)
-	m.cmds = &cmds
+	m.CT.TinyJsonDB = TinyJsonDB.New()
+	m.CT.Slack.Token = token
+	_, err = m.CT.Slack.API_CALL("rtm.start", nil)
+	if err!=nil{
+		panic(err.Error())
+	}
+	m.CT.Websocket, err = websocket.Dial(m.CT.Slack.RTM.URL, "", "https://slack.com/")
+	m.CT.Random = rand.New(rand.NewSource(time.Now().Unix()))
 	if err!=nil{
 		panic(err.Error())
 	}else{
-		m.cmds.Handler("exit", func(*CT, Slack.OMNI){
+		m.Handler("exit", func(*CT, Slack.OMNI){
 			// TODO(doc): gracefull exit
 		},"","")
 		if err != nil {
@@ -28,35 +49,35 @@ func NewMarcy(token string)Marcy{
 func (m *Marcy)Loop(){
 	for true {
 		var recv Slack.OMNI
-		websocket.JSON.Receive(m.cmds.CT.Websocket, &recv)
+		websocket.JSON.Receive(m.CT.Websocket, &recv)
 		switch recv.Type{
 		case "message":
-			if _, v := m.cmds.CT.Slack.GetNameById(recv.User); v != "marcy" && len(recv.Text)>0 && recv.Text[0]=='$'{
+			if _, v := m.CT.Slack.GetNameById(recv.User); v != "marcy" && len(recv.Text)>0 && recv.Text[0]=='$'{
 				e, err := explode_cmd(recv.Text)
 				if err==nil{
 					fmt.Println(recv)
-					if m.cmds.Commands[e[0]] != nil{
+					if m.Commands[e[0]].Command != nil{
 						if len(e) > 1 && (e[1] == "h" || e[1] == "help"){
-							if m.cmds.Help[e[0]] == ""{
-								Message(m.cmds.CT.Websocket, recv, m.cmds.QHelp[e[0]])
+							if m.Commands[e[0]].Help == ""{
+								Message(m.CT.Websocket, recv, m.Commands[e[0]].QHelp)
 							} else {
-								Message(m.cmds.CT.Websocket, recv, m.cmds.Help[e[0]])
+								Message(m.CT.Websocket, recv, m.Commands[e[0]].Help)
 							}
 						} else {
-							go m.cmds.Commands[e[0]](&m.cmds.CT, recv)
+							go m.Commands[e[0]].Command(&m.CT, recv)
 						}
 					} else if e[0] == "h" || e[0] == "help"{
 						go func() {
 							var t string
-							for k, v := range m.cmds.QHelp{
-								if v != ""{
-									t += "`$" + k + "` : " + v + "\n"
+							for k, v := range m.Commands{
+								if v.QHelp != ""{
+									t += "`$" + k + "` : " + v.QHelp + "\n"
 								}
 							}
-							Message(m.cmds.CT.Websocket, recv, t)
+							Message(m.CT.Websocket, recv, t)
 						}()
 					} else {
-						go default1(&m.cmds.CT, recv)
+						go default1(&m.CT, recv)
 					}
 				}
 			}
@@ -65,12 +86,12 @@ func (m *Marcy)Loop(){
 		case "hello":
 			println("hello")
 		case "presence_change":
-			_,v := m.cmds.CT.Slack.GetNameById(recv.User)
+			_,v := m.CT.Slack.GetNameById(recv.User)
 			fmt.Println(v, *recv.Presence)
 		case "user_typing":
 			fmt.Println(recv.User, recv.Channel)
 		case "reconnect_url":
-			m.cmds.CT.Slack.RTM.URL = recv.URL
+			m.CT.Slack.RTM.URL = recv.URL
 			// fmt.Println(recv.URL)
 		case "":
 			if recv.OK != nil && *recv.OK == false {
@@ -82,7 +103,17 @@ func (m *Marcy)Loop(){
 	}
 }
 func (m*Marcy)Handler(n string, f func(*CT, Slack.OMNI), QHelp string, Help string){
-	m.cmds.Handler(n, f, QHelp, Help);
+	if m.Commands == nil {
+		m.Commands = make(map[string]Command)
+	}
+	m.Commands[n] = Command{
+		Command : f,
+		QHelp: QHelp,
+		Help: Help,
+	}
+}
+func(m*Marcy)Alias(n2 string, n string){
+	m.Commands[n2]=m.Commands[n]
 }
 // Send a typing event in the channel specfied in the incomming message
 func Typing(ws *websocket.Conn, s Slack.OMNI) {

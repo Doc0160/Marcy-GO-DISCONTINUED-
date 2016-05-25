@@ -19,7 +19,7 @@ func (x *XKCD) StoreLast(ct *CT) {
 	var a XKCDcomic
 	r, err := commonHttpRequest(ct, "https://xkcd.com/info.0.json")
 	err = json.NewDecoder(*r).Decode(&a)
-	if !x.TJDB.IsSetTable("xkcd") {
+	if !x.TJDB.IsSetTable("xkcd"){
 		x.TJDB.CreateTable("xkcd")
 	}
 	x.TJDB.Data["xkcd"]["last"] = a.Num
