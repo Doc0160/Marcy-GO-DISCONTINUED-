@@ -1,6 +1,6 @@
 package main
 import (
-	// "fmt"
+	"fmt"
 	"TinyJsonDB"
 	"math/rand"
 	"slack"
@@ -12,7 +12,11 @@ func NewCommands(token string)(Commands,error){
 	c:= Commands{}
 	c.CT.TinyJsonDB = TinyJsonDB.New()
 	c.CT.Slack.Token = token
-	c.CT.Slack.API_CALL("rtm.start", nil)
+	_, err = c.CT.Slack.API_CALL("rtm.start", nil)
+	if err!=nil{
+		return c,err
+	}
+	fmt.Println(c.CT.Slack);
 	c.CT.Websocket, err = websocket.Dial(c.CT.Slack.RTM.URL, "", "https://slack.com/")
 	c.CT.Random = rand.New(rand.NewSource(time.Now().Unix()))
 	return c,err
@@ -32,7 +36,7 @@ type CT struct {
 	Websocket  *websocket.Conn
 	Slack      Slack.Slack
 	TinyJsonDB *TinyJsonDB.TinyJsonDB
-	Random   *rand.Rand
+	Random     *rand.Rand
 }
 func (c *Commands) Handler(n string, f func(*CT, Slack.OMNI), QHelp string, Help string) {
 	if c.Commands == nil {
