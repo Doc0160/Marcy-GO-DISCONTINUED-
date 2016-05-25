@@ -3,8 +3,8 @@ import(
 	"fmt"
 	"time"
 	"github.com/Doc0160/Marcy/slack"
+	"github.com/Doc0160/Marcy/TinyJsonDB"
 	"golang.org/x/net/websocket" // TODO(doc): use smthg better or custom
-	"TinyJsonDB"
 	"math/rand"
 )
 type Marcy struct{

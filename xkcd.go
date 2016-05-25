@@ -1,7 +1,7 @@
 package main
 import (
 	// "fmt"
-	"TinyJsonDB"
+	"github.com/Doc0160/Marcy/TinyJsonDB"
 	"encoding/json"
 	"net/http"
 	"github.com/Doc0160/Marcy/slack"
