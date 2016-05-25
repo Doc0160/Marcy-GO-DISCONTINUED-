@@ -4,7 +4,7 @@ import (
 	"TinyJsonDB"
 	"encoding/json"
 	"net/http"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"strconv"
 )
 func newXkcd(tjdb *TinyJsonDB.TinyJsonDB, ct *CT) *XKCD {

@@ -2,7 +2,7 @@ package main
 import(
 	// "math/rand"
 	// "time"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	// "fmt"
 	"encoding/json"
 )

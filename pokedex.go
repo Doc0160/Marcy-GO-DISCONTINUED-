@@ -1,7 +1,7 @@
 package main
 import(
 	"encoding/json"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"strconv"
 )
 func do_pkdx(ct *CT, s Slack.OMNI) {

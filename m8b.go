@@ -1,7 +1,7 @@
 package main
 import (
 	"math/rand"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"time"
 )
 var magic8 = []string{

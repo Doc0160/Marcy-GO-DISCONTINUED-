@@ -3,7 +3,7 @@ import (
 	// "fmt"
 	// "time"
 	// "math/rand"
-	"slack"
+	"github.com/Doc0160/Marcy/slack"
 	"encoding/json"
 )
 var perv_hentai = []string{
