@@ -10,7 +10,7 @@ type RTM        struct {
 	Ims            []Im      `json:"ims"`
 	// Team           Team      `json:"team"`
 	LatestEventTs  string    `json:"latest_event_ts"`
-	CacheTs        int       `json:"cache_ts"`
+	//CacheTs        int       `json:"cache_ts"`
 	// Subteams       Subteams  `json:"subteams"`
 	DND            DND       `json:"dnd"`
 	// CacheVersion   string    `json:"cache_version"`
@@ -35,10 +35,10 @@ type DND        struct {
 	SnoozeEnabled  bool `json:"snooze_enabled"`
 }
 type Self       struct {
-	ID string `json:"id"`
-	Name string `json:"name"`
-	Prefs Prefs `json:"prefs"`
-	Created int `json:"created"`
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	Prefs          Prefs  `json:"prefs"`
+	Created        int    `json:"created"`
 	ManualPresence string `json:"manual_presence"`
 }
 type Subteams   struct {
@@ -124,9 +124,9 @@ type User       struct {
 	Status   interface{} `json:"status,omitempty"`
 	Color    string      `json:"color,omitempty"`
 	RealName string      `json:"real_name,omitempty"`
-	Tz       string      `json:"tz,omitempty"`
-	TzLabel  string      `json:"tz_label,omitempty"`
-	TzOffset int         `json:"tz_offset,omitempty"`
+	// Tz       string      `json:"tz,omitempty"`
+	// TzLabel  string      `json:"tz_label,omitempty"`
+	// TzOffset int         `json:"tz_offset,omitempty"`
 	Profile struct{
 		AvatarHash         string      `json:"avatar_hash"`
 		RealName           string      `json:"real_name"`

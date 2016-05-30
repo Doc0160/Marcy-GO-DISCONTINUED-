@@ -9,8 +9,12 @@ import(
 )
 type Marcy struct{
 	//cmds Commands
-	Commands map[string]Command
-	CT CT
+	Commands       map[string]Command
+	CT             CT
+	DefaultCommand func(*CT, Slack.OMNI)
+	HelpCommand    func(*CT, Slack.OMNI,*map[string]Command)
+	//
+	Master string
 }
 type Command struct{
 	Command func(*CT, Slack.OMNI)
@@ -23,8 +27,9 @@ type CT struct {
 	TinyJsonDB *TinyJsonDB.TinyJsonDB
 	Random     *rand.Rand
 }
-func NewMarcy(token string)Marcy{
+func NewMarcy(token string, master string)Marcy{
 	var m Marcy
+	m.Master=master
 	var err error
 	m.CT.TinyJsonDB = TinyJsonDB.New()
 	m.CT.Slack.Token = token
@@ -37,11 +42,32 @@ func NewMarcy(token string)Marcy{
 	if err!=nil{
 		panic(err.Error())
 	}else{
-		m.Handler("exit", func(*CT, Slack.OMNI){
-			// TODO(doc): gracefull exit
+		m.Handler("exit", func(ct*CT, s Slack.OMNI){
+			if m.IsMaster(s){
+				// TODO(doc): gracefull exit
+				panic("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+			}else{
+				Message(ct.Websocket, s, "Humain, tu es stupide.")
+			}
 		},"","")
+		m.Alias("quit", "exit");
+		
+		m.Handler("mdr", func(ct *CT, s Slack.OMNI){
+			Message(ct.Websocket, s, "HHAHAHAHAHA !")
+		},"","")
+		
+		m.Alias("lol","mdr");
 		if err != nil {
 			panic(err.Error())
+		}
+		m.HelpCommand=func(CT*CT,recv Slack.OMNI,Commands*map[string]Command) {
+			var t string
+			for k, v := range *Commands{
+				if v.QHelp != ""{
+					t += "`$" + k + "` : " + v.QHelp + "\n"
+				}
+			}
+			Message(CT.Websocket, recv, t)
 		}
 	}
 	return m;
@@ -67,27 +93,27 @@ func (m *Marcy)Loop(){
 							go m.Commands[e[0]].Command(&m.CT, recv)
 						}
 					} else if e[0] == "h" || e[0] == "help"{
-						go func() {
-							var t string
-							for k, v := range m.Commands{
-								if v.QHelp != ""{
-									t += "`$" + k + "` : " + v.QHelp + "\n"
-								}
-							}
-							Message(m.CT.Websocket, recv, t)
-						}()
+						go m.HelpCommand(&m.CT, recv, &m.Commands);
 					} else {
 						go default1(&m.CT, recv)
 					}
 				}
 			}
 		case "file_shared":
-			fmt.Println(recv.File)
+			fmt.Println(*recv.File)
+			Message(m.CT.Websocket,Slack.OMNI{Channel:"D0LM5HH25"},recv.File.URLPrivateDownload)
+			//D0LM5HH25
 		case "hello":
 			println("hello")
 		case "presence_change":
+			m.CT.Slack.SetPresence(recv.User,*recv.Presence)
 			_,v := m.CT.Slack.GetNameById(recv.User)
 			fmt.Println(v, *recv.Presence)
+			if v == "satan_test777" && *recv.Presence=="away"{
+				var a Slack.OMNI
+				a.Channel="G0R8C5KU7"
+				Message(m.CT.Websocket, a, ">ICI REPOSE REX\n```Chien aimant```\n```Puceau de premiére```\n```Bot Stupide```\n```Faisait le beau comme personne```\n```Se Léchait les couilles comme personne```")
+			}
 		case "user_typing":
 			fmt.Println(recv.User, recv.Channel)
 		case "reconnect_url":
@@ -114,6 +140,13 @@ func (m*Marcy)Handler(n string, f func(*CT, Slack.OMNI), QHelp string, Help stri
 }
 func(m*Marcy)Alias(n2 string, n string){
 	m.Commands[n2]=m.Commands[n]
+}
+func(m*Marcy)SetDefaultCommand(f func(*CT,Slack.OMNI)){
+	m.DefaultCommand=f
+}
+func(m*Marcy)IsMaster(recv Slack.OMNI)bool{
+	_, v := m.CT.Slack.GetNameById(recv.User)
+	return  v == m.Master
 }
 // Send a typing event in the channel specfied in the incomming message
 func Typing(ws *websocket.Conn, s Slack.OMNI) {

@@ -9,7 +9,6 @@ import (
 
 type Slack struct {
 	Token  string
-	Data   map[string]json.RawMessage
 	Client http.Client
 	RTM    RTM
 }
@@ -21,6 +20,7 @@ const(
 )
 // Call slack's web api
 func (slack *Slack) API_CALL(method string, args map[string]interface{}) (interface{}, error) {
+	url := "https://slack.com/api/" + method + "?token=" + slack.Token
 	if method == "rtm.start" {
 		resp, err := slack.Client.Get("https://slack.com/api/rtm.start?token=" + slack.Token)
 		if err != nil {
@@ -30,8 +30,6 @@ func (slack *Slack) API_CALL(method string, args map[string]interface{}) (interf
 		resp.Body.Close()
 		return slack.RTM, err
 	} else {
-		// concat args
-		url := "https://slack.com/api/" + method + "?token=" + slack.Token
 		for k, v := range args {
 			if k == "attachments" {
 				m, _ := json.Marshal(v)
@@ -116,4 +114,11 @@ func (slack *Slack) TypeOfId(id string) string {
 		}
 	}
 	return ""
+}
+func(slack *Slack)SetPresence(id string, a string){
+	for _, v := range slack.RTM.Users {
+		if id == v.ID {
+			v.Presence=a
+		}
+	}
 }
