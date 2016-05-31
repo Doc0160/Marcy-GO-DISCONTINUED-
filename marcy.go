@@ -20,6 +20,7 @@ type Command struct{
 	Command func(*CT, Slack.OMNI)
 	QHelp   string
 	Help    string
+	Alias   bool
 }
 type CT struct {
 	Websocket  *websocket.Conn
@@ -55,15 +56,20 @@ func NewMarcy(token string, master string)Marcy{
 		m.Handler("mdr", func(ct *CT, s Slack.OMNI){
 			Message(ct.Websocket, s, "HHAHAHAHAHA !")
 		},"","")
-		
 		m.Alias("lol","mdr");
+		
+		m.Handler("marcy", func(ct *CT, s Slack.OMNI){
+			a,_ := cut_cmd(s.Text)
+			Message(ct.Websocket, s, a)
+		},"","")
+		
 		if err != nil {
 			panic(err.Error())
 		}
 		m.HelpCommand=func(CT*CT,recv Slack.OMNI,Commands*map[string]Command) {
 			var t string
 			for k, v := range *Commands{
-				if v.QHelp != ""{
+				if v.QHelp != "" && v.Alias==false{
 					t += "`$" + k + "` : " + v.QHelp + "\n"
 				}
 			}
@@ -101,7 +107,7 @@ func (m *Marcy)Loop(){
 			}
 		case "file_shared":
 			fmt.Println(*recv.File)
-			Message(m.CT.Websocket,Slack.OMNI{Channel:"D0LM5HH25"},recv.File.URLPrivateDownload)
+			Message(m.CT.Websocket,Slack.OMNI{Channel:"D0LM5HH25"},(*recv.File).URLPrivateDownload)
 			//D0LM5HH25
 		case "hello":
 			println("hello")
@@ -109,13 +115,13 @@ func (m *Marcy)Loop(){
 			m.CT.Slack.SetPresence(recv.User,*recv.Presence)
 			_,v := m.CT.Slack.GetNameById(recv.User)
 			fmt.Println(v, *recv.Presence)
-			if v == "satan_test777" && *recv.Presence=="away"{
+			if v == "satan_777" && *recv.Presence=="away"{
 				var a Slack.OMNI
 				a.Channel="G0R8C5KU7"
 				Message(m.CT.Websocket, a, ">ICI REPOSE REX\n```Chien aimant```\n```Puceau de premiére```\n```Bot Stupide```\n```Faisait le beau comme personne```\n```Se Léchait les couilles comme personne```")
 			}
 		case "user_typing":
-			fmt.Println(recv.User, recv.Channel)
+			//fmt.Println(recv.User, recv.Channel)
 		case "reconnect_url":
 			m.CT.Slack.RTM.URL = *recv.URL
 		case "":
@@ -136,12 +142,21 @@ func (m*Marcy)Handler(n string, f func(*CT, Slack.OMNI), QHelp string, Help stri
 	}
 	m.Commands[n] = Command{
 		Command : f,
-		QHelp: QHelp,
-		Help: Help,
+		QHelp:    QHelp,
+		Help:     Help,
+		Alias:    false,
 	}
 }
 func(m*Marcy)Alias(n2 string, n string){
-	m.Commands[n2]=m.Commands[n]
+	m.Commands[n2] = Command{
+		Command : m.Commands[n].Command,
+		QHelp:    m.Commands[n].QHelp,
+		Help:     m.Commands[n].Help,
+		Alias:    true,
+	}
+	// m.Commands[n2]=m.Commands[n]
+	//m.Commands[n2].QHelp=""
+	// m.Commands[n2].Alias=true
 }
 func(m*Marcy)SetDefaultCommand(f func(*CT,Slack.OMNI)){
 	m.DefaultCommand=f

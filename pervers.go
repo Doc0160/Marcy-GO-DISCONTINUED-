@@ -6,7 +6,7 @@ import (
 	"github.com/Doc0160/Marcy/slack"
 	"encoding/json"
 )
-var perv_hentai = []string{
+var perv_girls = []string{
 	"YogaPants",
 	"boobs",
 	"SexyButNotPorn",
@@ -18,7 +18,15 @@ var perv_hentai = []string{
 	// "rearpussy",
 	"assinthong",
 }
-var PervCache StackString
+var perv_boys = []string{
+	"HotGuys",
+	"malemodels",
+	"cuteguys",
+	"hardbodiesmale",
+	"malemodelsNSFW",
+}
+var PervGirlsCache StackString
+var PervMenCache StackString
 func get_reddit_one(ct *CT, reddit_perv []string, a *Reddit_Thread) (int, int) {
 	randy := ct.Random.Intn(len(reddit_perv))
 	r, err := commonHttpRequest(ct, "https://www.reddit.com/r/"+reddit_perv[randy]+".json")
@@ -47,23 +55,26 @@ func common_perv(ct *CT, s Slack.OMNI, reddit_perv []string, c *StackString) {
 		Typing(ct.Websocket, s)
 		Message(ct.Websocket, s, a.Data.Children[randy2].Data.Preview.Images[0].Source.URL)
 	}else{
-		a, _ := PervCache.Pop()
+		a, _ := c.Pop()
 		Message(ct.Websocket, s, a)
 	}
 	if c.Size()==0{
-		PervPreload(10, reddit_perv, ct)
+		PervPreload(10, reddit_perv, ct, c)
 	}
 }
-func PervPreload(x int, reddit_perv []string, ct *CT){
+func PervPreload(x int, reddit_perv []string, ct *CT, c *StackString){
 	//var err error
-	for PervCache.Size()<x{
+	for c.Size()<x{
 		var a Reddit_Thread
 		_, randy2 := get_reddit_one(ct, reddit_perv, &a)
-		PervCache.Push(a.Data.Children[randy2].Data.Preview.Images[0].Source.URL)
+		c.Push(a.Data.Children[randy2].Data.Preview.Images[0].Source.URL)
 	}
 }
 func perv(ct *CT, s Slack.OMNI) {
-	common_perv(ct, s, perv_hentai, &PervCache)
+	common_perv(ct, s, perv_girls, &PervGirlsCache)
+}
+func perv_get_boys(ct *CT, s Slack.OMNI) {
+	common_perv(ct, s, perv_boys, &PervMenCache)
 }
 // TODO(doc): reduce that ... thing
 type Reddit_Thread struct {
