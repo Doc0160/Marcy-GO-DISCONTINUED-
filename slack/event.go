@@ -3,14 +3,14 @@ package Slack
 type (
 	OMNI struct {
 		Type         string        `json:"type"`
-		Subtype      string        `json:"subtype"`
+		Subtype      *string       `json:"subtype"`
 		Channel      string        `json:"channel"`
 		User         string        `json:"user"`
 		Text         string        `json:"text"`
 		TS           *string       `json:"ts"`
 		File         *File         `json:"file"`
 		Attachements *[]Attachment `json:"attachments"`
-		URL          string        `json:"url"`
+		URL          *string       `json:"url"`
 		ReplyTo      *string       `json:"reply_to"`
 		OK           *bool         `json:"ok"`
 		Error        *struct {

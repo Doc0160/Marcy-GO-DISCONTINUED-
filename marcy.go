@@ -117,11 +117,13 @@ func (m *Marcy)Loop(){
 		case "user_typing":
 			fmt.Println(recv.User, recv.Channel)
 		case "reconnect_url":
-			m.CT.Slack.RTM.URL = recv.URL
-			// fmt.Println(recv.URL)
+			m.CT.Slack.RTM.URL = *recv.URL
 		case "":
-			if recv.OK != nil && *recv.OK == false {
-				fmt.Println("OK:", recv.OK, recv.Error)
+			if recv.OK != nil{
+				fmt.Println("OK:", *recv.OK, recv.Error)
+			}else{
+				fmt.Println(recv)
+				panic("euuuuuuuuuuuuuuuuh")
 			}
 		default:
 			fmt.Println(recv)
