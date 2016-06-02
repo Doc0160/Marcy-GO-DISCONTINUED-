@@ -113,8 +113,8 @@ func (m *Marcy)Loop(){
 			println("hello")
 		case "presence_change":
 			m.CT.Slack.SetPresence(recv.User,*recv.Presence)
-			_,v := m.CT.Slack.GetNameById(recv.User)
-			fmt.Println(v, *recv.Presence)
+			// _,v := m.CT.Slack.GetNameById(recv.User)
+			// fmt.Println(v, *recv.Presence)
 			if v == "satan_777" && *recv.Presence=="away"{
 				var a Slack.OMNI
 				a.Channel="G0R8C5KU7"

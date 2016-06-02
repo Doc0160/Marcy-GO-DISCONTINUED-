@@ -4,6 +4,12 @@ import(
 	"fmt"
 	// "strings"
 )
+type token struct{
+	Name  string
+	Value string
+	Arg1  *token
+	Arg2  *token
+}
 func roll(ct *CT, s Slack.OMNI){
 	s.Text,_ = cut_cmd(s.Text)
 	a,_ := explode_cmd(s.Text)
@@ -12,6 +18,8 @@ func roll(ct *CT, s Slack.OMNI){
 }
 
 func roll_tokenizer(a string)([]string,[]string){
+	// var tokens token
+	// var stack stackynator
 	var b []string
 	var t []string
 	for i:=0;i<len(a);i++{

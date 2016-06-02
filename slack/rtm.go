@@ -12,7 +12,7 @@ type RTM        struct {
 	LatestEventTs  string    `json:"latest_event_ts"`
 	//CacheTs        int       `json:"cache_ts"`
 	// Subteams       Subteams  `json:"subteams"`
-	DND            DND       `json:"dnd"`
+	// DND            DND       `json:"dnd"`
 	// CacheVersion   string    `json:"cache_version"`
 	// CacheTsVersion string    `json:"cache_ts_version"`
 	Bots           []Bot     `json:"bots"`
@@ -37,7 +37,7 @@ type DND        struct {
 type Self       struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`
-	Prefs          Prefs  `json:"prefs"`
+	// Prefs          Prefs  `json:"prefs"`
 	Created        int    `json:"created"`
 	ManualPresence string `json:"manual_presence"`
 }
@@ -121,7 +121,7 @@ type User       struct {
 	TeamID   string      `json:"team_id"`
 	Name     string      `json:"name"`
 	Deleted  bool        `json:"deleted"`
-	Status   interface{} `json:"status,omitempty"`
+	// Status   interface{} `json:"status,omitempty"`
 	Color    string      `json:"color,omitempty"`
 	RealName string      `json:"real_name,omitempty"`
 	// Tz       string      `json:"tz,omitempty"`
@@ -140,11 +140,11 @@ type User       struct {
 		Image512           string      `json:"image_512"`
 		Fields             interface{} `json:"fields"`
 	} `json:"profile"`
-	IsAdmin           bool   `json:"is_admin,omitempty"`
-	IsOwner           bool   `json:"is_owner,omitempty"`
-	IsPrimaryOwner    bool   `json:"is_primary_owner,omitempty"`
-	IsRestricted      bool   `json:"is_restricted,omitempty"`
-	IsUltraRestricted bool   `json:"is_ultra_restricted,omitempty"`
+	// IsAdmin           bool   `json:"is_admin,omitempty"`
+	// IsOwner           bool   `json:"is_owner,omitempty"`
+	// IsPrimaryOwner    bool   `json:"is_primary_owner,omitempty"`
+	// IsRestricted      bool   `json:"is_restricted,omitempty"`
+	// IsUltraRestricted bool   `json:"is_ultra_restricted,omitempty"`
 	IsBot             bool   `json:"is_bot"`
 	Presence          string `json:"presence"`
 }

@@ -214,6 +214,11 @@ func flipText(input string) string {
 	flips["&"] = "⅋"
 	flips["_"] = "‾"
 	
+	flips["┻"] = "┬"
+	flips["┬"] = "┻"
+	flips["━"] = "─"
+	flips["─"] = "━"
+	
 	for _, rune := range input {
 		letter := string(rune)
 		// get matches
