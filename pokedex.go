@@ -5,7 +5,7 @@ import(
 	"strconv"
 )
 func do_pkdx(ct *CT, s Slack.OMNI) {
-	e, _ := explode_cmd(s.Text)
+	e := explode_cmd(s.Text)
 	if len(e) > 1 {
 		nb, err := strconv.Atoi(e[1])
 		if err == nil {

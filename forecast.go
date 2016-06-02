@@ -8,7 +8,7 @@ import (
 	"time"
 )
 func do_forecastHourly(ct *CT, s Slack.OMNI) {
-	e, _ := explode_cmd(s.Text)
+	e := explode_cmd(s.Text)
 	if len(e) > 1 {
 		Typing(ct.Websocket, s)
 		x, y, err := forecast(e[1])

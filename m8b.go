@@ -30,7 +30,7 @@ var magic8 = []string{
 }
 func doMagic8ball(ct *CT, s Slack.OMNI){
 	rand.Seed(time.Now().Unix())
-	q,_ := cut_cmd(s.Text)
+	q := cut_cmd(s.Text)
 	var text = magic8[rand.Intn(len(magic8))]
 	var att Slack.Attachment
 	att.Text = text

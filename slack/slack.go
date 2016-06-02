@@ -54,7 +54,6 @@ func (slack *Slack) API_CALL(method string, args map[string]interface{}) (interf
 // return object of crorresponding name (either user,im,group,channel) in interface
 func (slack *Slack) GetByName(name string, w string) (string, interface{}) {
 	// w := slack.TypeOfId(id)
-	//
 	switch(w){
 	case USER:
 		for _, v := range slack.RTM.Users {

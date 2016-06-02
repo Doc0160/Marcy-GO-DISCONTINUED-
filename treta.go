@@ -174,7 +174,7 @@ var (
 
 func treta(ct *CT, s Slack.OMNI){
 	rand.Seed(time.Now().Unix())
-	m,_ := cut_cmd(s.Text)
+	m:= cut_cmd(s.Text)
 	m = strings.ToUpper(m)
 	// Message(ct.Websocket, s, m+strconv.Itoa(len(m)))
 	if _, found := treta_quotes[m]; found{

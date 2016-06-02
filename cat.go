@@ -3,7 +3,7 @@ import(
 	"github.com/Doc0160/Marcy/slack"
 	"encoding/xml"
 	"fmt"
-	"strconv"
+	// "strconv"
 )
 var theCatApiKey = "ODk4MDc"
 var CatCache StackString
@@ -24,7 +24,7 @@ func cat(ct *CT, s Slack.OMNI){
 			if err!=nil{
 				Message(ct.Websocket, s, err.Error())
 			}else{
-				Message(ct.Websocket, s, a.Images[0].URL+" "+strconv.Itoa(CatCache.Size()))
+				Message(ct.Websocket, s, a.Images[0].URL)
 			}
 		}
 	}
@@ -44,7 +44,7 @@ func getACat(ct *CT)(string,error){
 		if err!=nil{
 			return "", err
 		}else{
-			return a.Images[0].URL+" "+strconv.Itoa(CatCache.Size()),nil
+			return a.Images[0].URL,nil
 		}
 	}
 }

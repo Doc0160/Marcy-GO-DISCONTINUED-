@@ -8,13 +8,11 @@ import(
 	"math/rand"
 )
 type Marcy struct{
-	//cmds Commands
 	Commands       map[string]Command
 	CT             CT
 	DefaultCommand func(*CT, Slack.OMNI)
 	HelpCommand    func(*CT, Slack.OMNI,*map[string]Command)
-	//
-	Master string
+	Master         string
 }
 type Command struct{
 	Command func(*CT, Slack.OMNI)
@@ -59,7 +57,7 @@ func NewMarcy(token string, master string)Marcy{
 		m.Alias("lol","mdr");
 		
 		m.Handler("marcy", func(ct *CT, s Slack.OMNI){
-			a,_ := cut_cmd(s.Text)
+			a := cut_cmd(s.Text)
 			Message(ct.Websocket, s, a)
 		},"","")
 		
@@ -78,33 +76,47 @@ func NewMarcy(token string, master string)Marcy{
 	}
 	return m;
 }
+func(m*Marcy)MessageHandler(recv Slack.OMNI){
+	if _, v := m.CT.Slack.GetNameById(recv.User); v != "marcy" && len(recv.Text)>0 && recv.Text[0]=='$'{
+		e := explode_cmd(recv.Text)
+		fmt.Println(recv)
+		if m.Commands[e[0]].Command != nil{
+			if len(e) > 1 && (e[1] == "h" || e[1] == "help"){
+				if m.Commands[e[0]].Help == ""{
+					Message(m.CT.Websocket, recv, m.Commands[e[0]].QHelp)
+				} else {
+					Message(m.CT.Websocket, recv, m.Commands[e[0]].Help)
+				}
+			} else {
+				go m.Commands[e[0]].Command(&m.CT, recv)
+			}
+		} else if e[0] == "h" || e[0] == "help"{
+			go m.HelpCommand(&m.CT, recv, &m.Commands);
+		} else {
+			go default1(&m.CT, recv)
+		}
+	}
+}
+func(m*Marcy)FileHandler(recv Slack.OMNI){
+
+}
+func(m*Marcy)PresenceChange(recv Slack.OMNI){
+	m.CT.Slack.SetPresence(recv.User,*recv.Presence)
+	_,v := m.CT.Slack.GetNameById(recv.User)
+	// fmt.Println(v, *recv.Presence)
+	if v == "satan_777" && *recv.Presence=="away"{
+		var a Slack.OMNI
+		a.Channel="G0R8C5KU7"
+		Message(m.CT.Websocket, a, ">ICI REPOSE REX\n```Chien aimant```\n```Puceau de premiére```\n```Bot Stupide```\n```Faisait le beau comme personne```\n```Se Léchait les couilles comme personne```")
+	}
+}
 func (m *Marcy)Loop(){
 	for true {
 		var recv Slack.OMNI
 		websocket.JSON.Receive(m.CT.Websocket, &recv)
 		switch recv.Type{
 		case "message":
-			if _, v := m.CT.Slack.GetNameById(recv.User); v != "marcy" && len(recv.Text)>0 && recv.Text[0]=='$'{
-				e, err := explode_cmd(recv.Text)
-				if err==nil{
-					fmt.Println(recv)
-					if m.Commands[e[0]].Command != nil{
-						if len(e) > 1 && (e[1] == "h" || e[1] == "help"){
-							if m.Commands[e[0]].Help == ""{
-								Message(m.CT.Websocket, recv, m.Commands[e[0]].QHelp)
-							} else {
-								Message(m.CT.Websocket, recv, m.Commands[e[0]].Help)
-							}
-						} else {
-							go m.Commands[e[0]].Command(&m.CT, recv)
-						}
-					} else if e[0] == "h" || e[0] == "help"{
-						go m.HelpCommand(&m.CT, recv, &m.Commands);
-					} else {
-						go default1(&m.CT, recv)
-					}
-				}
-			}
+			go m.MessageHandler(recv)
 		case "file_shared":
 			fmt.Println(*recv.File)
 			Message(m.CT.Websocket,Slack.OMNI{Channel:"D0LM5HH25"},(*recv.File).URLPrivateDownload)
@@ -112,14 +124,7 @@ func (m *Marcy)Loop(){
 		case "hello":
 			println("hello")
 		case "presence_change":
-			m.CT.Slack.SetPresence(recv.User,*recv.Presence)
-			// _,v := m.CT.Slack.GetNameById(recv.User)
-			// fmt.Println(v, *recv.Presence)
-			if v == "satan_777" && *recv.Presence=="away"{
-				var a Slack.OMNI
-				a.Channel="G0R8C5KU7"
-				Message(m.CT.Websocket, a, ">ICI REPOSE REX\n```Chien aimant```\n```Puceau de premiére```\n```Bot Stupide```\n```Faisait le beau comme personne```\n```Se Léchait les couilles comme personne```")
-			}
+			go m.PresenceChange(recv)
 		case "user_typing":
 			//fmt.Println(recv.User, recv.Channel)
 		case "reconnect_url":
@@ -154,9 +159,6 @@ func(m*Marcy)Alias(n2 string, n string){
 		Help:     m.Commands[n].Help,
 		Alias:    true,
 	}
-	// m.Commands[n2]=m.Commands[n]
-	//m.Commands[n2].QHelp=""
-	// m.Commands[n2].Alias=true
 }
 func(m*Marcy)SetDefaultCommand(f func(*CT,Slack.OMNI)){
 	m.DefaultCommand=f

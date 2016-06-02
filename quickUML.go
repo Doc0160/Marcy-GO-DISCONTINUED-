@@ -4,11 +4,7 @@ import (
 	"github.com/Doc0160/Marcy/slack"
 )
 func qUML(ct *CT, s Slack.OMNI) {
-	e, err := explode_cmd(s.Text)
-	if err != nil {
-		Message(ct.Websocket, s, "Y'a une couille dans le paté!\n"+err.Error())
-		return
-	}
+	e := explode_cmd(s.Text)
 	if len(e) == 2 {
 		Message(ct.Websocket, s, "http://yuml.me/diagram/scruffy/class/"+url.QueryEscape(e[1])+".png")
 	} else {

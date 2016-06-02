@@ -33,7 +33,7 @@ func (x *XKCD) StoreLast(ct *CT) {
 	}
 }
 func (x *XKCD) do_xkcd(ct *CT, s Slack.OMNI) {
-	e, _ := explode_cmd(s.Text)
+	e := explode_cmd(s.Text)
 	if len(e) > 0 {
 		var nb int
 		var err error

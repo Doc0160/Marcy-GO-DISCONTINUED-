@@ -9,8 +9,8 @@ import(
 func giphy(ct *CT, s Slack.OMNI){
 	var gs giphy_struct
 	var err error
-	s.Text, _ = cut_cmd(s.Text)
-	temp, _ := explode_cmd(s.Text)
+	s.Text = cut_cmd(s.Text)
+	temp := explode_cmd(s.Text)
 	if len(temp)==0{
 		Message(ct.Websocket, s, "Usage:\n>$g `something`")
 		return

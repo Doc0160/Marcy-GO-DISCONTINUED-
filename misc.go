@@ -1,6 +1,6 @@
 package main
 import (
-	"errors"
+	// "errors"
 	"io"
 	"net/http"
 	"strings"
@@ -32,21 +32,18 @@ func implode(c []string, delimiter byte)string{
 	}
 	return a
 }
-func explode_cmd(cmd string) ([]string, error) {
+func explode_cmd(cmd string) ([]string) {
 	var r []string
 	if len(cmd) > 0 {
 		if cmd[0] == '$' || cmd[0] == '%' || cmd[0] == '!' {
 			cmd = cmd[1:]
 		}
-			r = strings.Split(cmd, " ")
-			return r, nil
-		/*}else{
-			return r, errors.New("Not a command")
-		}*/
+		r = strings.Split(cmd, " ")
+		return r
 	}
-	return r, errors.New("Texte vide")
+	return r
 }
-func get_cmd(cmd string) (string, error) {
+func get_cmd(cmd string)string {
 	var r string
 	if len(cmd) > 0 {
 		if cmd[0] == '$' || cmd[0] == '%' || cmd[0] == '!' {
@@ -57,14 +54,14 @@ func get_cmd(cmd string) (string, error) {
 			}else{
 				r = cmd[:i]
 			}
-			return r, nil
+			return r
 		}else{
-			return r, errors.New("Not a command")
+			return r
 		}
 	}
-	return r, errors.New("Texte vide")
+	return r
 }
-func cut_cmd(cmd string) (string, error) {
+func cut_cmd(cmd string)string {
 	var r string
 	if len(cmd) > 0 {
 		if cmd[0] == '$' || cmd[0] == '%' || cmd[0] == '!' {
@@ -75,12 +72,12 @@ func cut_cmd(cmd string) (string, error) {
 			}else{
 				r = cmd[i+1:]
 			}
-			return r, nil
+			return r
 		}else{
-			return r, errors.New("Not a command")
+			return r
 		}
 	}
-	return r, errors.New("Texte vide")
+	return r
 }
 func commonHttpRequest(ct *CT, url string) (*io.ReadCloser, error) {
 	req, err := http.NewRequest("GET", url, nil)

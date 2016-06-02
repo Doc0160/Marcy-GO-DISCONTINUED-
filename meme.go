@@ -37,7 +37,7 @@ var meme_templates = map[string]string{
 	"xxeverywhere":             "http://memegen.link/buzz/_/_.jpg",
 }
 func memify(ct *CT, s Slack.OMNI) {
-	e, _ := explode_cmd(s.Text)
+	e := explode_cmd(s.Text)
 	if len(e) == 1 {
 		var t string
 		for k, _ := range meme_templates {

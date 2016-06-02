@@ -11,8 +11,8 @@ type token struct{
 	Arg2  *token
 }
 func roll(ct *CT, s Slack.OMNI){
-	s.Text,_ = cut_cmd(s.Text)
-	a,_ := explode_cmd(s.Text)
+	s.Text = cut_cmd(s.Text)
+	a := explode_cmd(s.Text)
 	z,e := roll_tokenizer(a[0])
 	Message(ct.Websocket, s, fmt.Sprintf("%+v\n%+v", z,e))
 }
