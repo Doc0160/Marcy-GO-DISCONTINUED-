@@ -7,6 +7,7 @@ func main() {
 	//
 	var xkcd = newXkcd(marcy.CT.TinyJsonDB, &marcy.CT)
 	marcy.Handler("g", giphy, "giphy", "");
+	marcy.Handler("flip", flip, "", "");
 	marcy.Handler("ping", ping, "pong!", "PONG!")
 	marcy.Handler("debug", doDebug, "debug", "debug")
 	marcy.Handler("xkcd", xkcd.do_xkcd, "XKCD !", "")
@@ -63,6 +64,7 @@ func main() {
 		Message(ct.Websocket, s, "!va cherhcer")
 		Message(ct.Websocket, s, "attends qu'il parte et va se cacher")
 	}, "", "")
+	marcy.Handler("hn", hn, "Hacker news : https://news.ycombinator.com/","")
 	//
 	marcy.Loop()
 }

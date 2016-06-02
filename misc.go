@@ -5,6 +5,22 @@ import (
 	"net/http"
 	"strings"
 	"encoding/json"
+	"encoding/xml"
+)
+type(
+	RSSChannel struct {
+		XMLName xml.Name        `xml:"rss"`
+		Items   RSSItems `xml:"channel"`
+	}
+	RSSItems struct {
+		XMLName  xml.Name         `xml:"channel"`
+		ItemList []RSSItem `xml:"item"`
+	}
+	RSSItem struct {
+		Title       string `xml:"title"`
+		Link        string `xml:"link"`
+		Description string `xml:"description"`
+	}
 )
 func toX(a string, b int, p string, s bool) string {
 	for len(a) < b {
@@ -97,6 +113,20 @@ func commonJsonRequest(ct *CT, url string, o interface{})error{
 		return err
 	} else {
 		err := json.NewDecoder(*r).Decode(&o)
+		defer (*r).Close()
+		if err != nil {
+			return err
+		} else {
+			return nil
+		}
+	}
+}
+func commonXMLRequest(ct *CT, url string, o interface{})error{
+	r, err := commonHttpRequest(ct, url)
+	if err != nil {
+		return err
+	} else {
+		err := xml.NewDecoder(*r).Decode(&o)
 		defer (*r).Close()
 		if err != nil {
 			return err

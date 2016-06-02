@@ -14,12 +14,6 @@ type Marcy struct{
 	HelpCommand    func(*CT, Slack.OMNI,*map[string]Command)
 	Master         string
 }
-type Command struct{
-	Command func(*CT, Slack.OMNI)
-	QHelp   string
-	Help    string
-	Alias   bool
-}
 type CT struct {
 	Websocket  *websocket.Conn
 	Slack      Slack.Slack
