@@ -9,6 +9,7 @@ func main() {
 	//
 	var xkcd = newXkcd(marcy.CT.TinyJsonDB, &marcy.CT)
 	marcy.Handler("g", giphy, "giphy", "");
+	marcy.Handler("unflip", unflip, "", "");
 	marcy.Handler("flip", flip, "", "");
 	marcy.Handler("ping", ping, "pong!", "PONG!")
 	marcy.Handler("debug", doDebug, "debug", "debug")

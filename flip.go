@@ -9,3 +9,10 @@ func flip(ct *CT, s Slack.OMNI){
 	}
 	Message(ct.Websocket, s, "(╯°□°）╯︵"+flipText(reverseString(s.Text)))
 }
+func unflip(ct *CT, s Slack.OMNI){
+	s.Text = cut_cmd(s.Text)
+	if s.Text==""{
+		s.Text="┻━┻"
+	}
+	Message(ct.Websocket, s, s.Text+"ノ( º _ ºノ) ")
+}

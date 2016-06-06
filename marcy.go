@@ -4,7 +4,7 @@ import(
 	"time"
 	"github.com/Doc0160/Marcy/slack"
 	"github.com/Doc0160/Marcy/TinyJsonDB"
-	"golang.org/x/net/websocket" // TODO(doc): use smthg better or custom
+	"github.com/Doc0160/Marcy/Websocket"
 	"math/rand"
 )
 type Marcy struct{
@@ -41,6 +41,7 @@ func NewMarcy(token string, master string)Marcy{
 		},"version","")
 		m.Handler("exit", func(ct*CT, s Slack.OMNI){
 			if m.IsMaster(s){
+				ct.Websocket.Close()
 				// TODO(doc): gracefull exit
 				panic("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 			}else{
