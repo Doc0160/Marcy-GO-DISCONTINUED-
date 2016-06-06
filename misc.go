@@ -32,7 +32,7 @@ func toX(a string, b int, p string, s bool) string {
 	}
 	return a
 }
-func implode(c []string, delimiter byte)string{
+func implode(c []string, delimiter string)string{
 	var a string
 	if len(c)==0{
 		return ""
@@ -41,9 +41,9 @@ func implode(c []string, delimiter byte)string{
 		return c[0]
 	}
 	for _,v := range c{
-		a+=v+string(delimiter)
+		a+=v+delimiter
 	}
-	if a[:len(a)-1]==string(delimiter){
+	if a[:len(a)-1]==delimiter{
 		a=a[:len(a)-1]
 	}
 	return a

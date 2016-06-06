@@ -13,6 +13,7 @@ var refresh time.Duration = 60
 
 func New() *TinyJsonDB {
 	var tjdb TinyJsonDB
+	tjdb.Updated = false
 	tjdb.Mutex = &sync.Mutex{}
 	tjdb.Data = make(map[string]map[string]interface{})
 	tjdb.Load()
@@ -20,8 +21,10 @@ func New() *TinyJsonDB {
 		defer tjdb.Save()
 		for true {
 			// if time.Now().Unix()-t > refresh {
-				tjdb.Save()
-				time.Sleep(refresh*time.Second)
+				if tjdb.Updated{
+					tjdb.Save()
+					time.Sleep(refresh*time.Second)
+				}
 			// } else {
 				// runtime.Gosched()
 			// }
@@ -70,5 +73,6 @@ type (
 	TinyJsonDB struct {
 		Data  map[string]map[string]interface{}
 		Mutex *sync.Mutex
+		Updated bool
 	}
 )

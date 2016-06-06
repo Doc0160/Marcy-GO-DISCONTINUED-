@@ -15,7 +15,7 @@ func giphy(ct *CT, s Slack.OMNI){
 		Message(ct.Websocket, s, "Usage:\n>$g `something`")
 		return
 	}
-	s.Text = implode(temp, ';')
+	s.Text = implode(temp, ";")
 	r, err := commonHttpRequest(ct, "https://api.giphy.com/v1/gifs/search?q="+s.Text+"&api_key=dc6zaTOxFJmzC")
 	if err != nil {
 		Message(ct.Websocket, s, "Paté: "+err.Error())

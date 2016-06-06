@@ -26,15 +26,19 @@ func NewMarcy(token string, master string)Marcy{
 	var err error
 	m.CT.TinyJsonDB = TinyJsonDB.New()
 	m.CT.Slack.Token = token
-	_, err = m.CT.Slack.API_CALL("rtm.start", nil)
+	ret, err := m.CT.Slack.API_CALL("rtm.start", nil)
 	if err!=nil{
 		panic(err.Error())
 	}
 	m.CT.Websocket, err = websocket.Dial(m.CT.Slack.RTM.URL, "", "https://slack.com/")
 	m.CT.Random = rand.New(rand.NewSource(time.Now().Unix()))
 	if err!=nil{
+		fmt.Println(ret)
 		panic(err.Error())
 	}else{
+		m.Handler("version", func(ct*CT, s Slack.OMNI){
+			Message(ct.Websocket, s, "")
+		},"version","")
 		m.Handler("exit", func(ct*CT, s Slack.OMNI){
 			if m.IsMaster(s){
 				// TODO(doc): gracefull exit
@@ -92,12 +96,11 @@ func(m*Marcy)MessageHandler(recv Slack.OMNI){
 	}
 }
 func(m*Marcy)FileHandler(recv Slack.OMNI){
-
+	
 }
 func(m*Marcy)PresenceChange(recv Slack.OMNI){
 	m.CT.Slack.SetPresence(recv.User,*recv.Presence)
 	_,v := m.CT.Slack.GetNameById(recv.User)
-	// fmt.Println(v, *recv.Presence)
 	if v == "satan_777" && *recv.Presence=="away"{
 		var a Slack.OMNI
 		a.Channel="G0R8C5KU7"

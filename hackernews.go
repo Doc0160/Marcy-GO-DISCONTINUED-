@@ -10,13 +10,14 @@ func hn(ct *CT, s Slack.OMNI){
 	commonXMLRequest(ct, "https://news.ycombinator.com/rss", &a)
 	i:=0
 	for _,v := range a.Items.ItemList{
-		if i>15{
+		if i>10{
 			break
 		}
 		f=append(f, Slack.Attachment{
 			Title: v.Title,
 			TitleLink: v.Link,
 			Fallback: "HackerNews: Bunch of News",
+			Text : v.Link,
 		})
 		i++
 	}

@@ -1,6 +1,8 @@
 package main
 import (
 	"github.com/Doc0160/Marcy/slack"
+	"time"
+	"strconv"
 )
 func main() {
 	marcy := NewMarcy("key", "doc0160")
@@ -53,6 +55,15 @@ func main() {
 	marcy.Handler("caresse", func(ct *CT, s Slack.OMNI) {
 		Message(ct.Websocket, s, "MAIS CH'UIS PAS UN CHIEN MOI !\n_(tu peux gratter un peu plus vers la droite ?)_")
 	}, "", "")
+	marcy.Handler("compute", func(ct *CT, s Slack.OMNI) {
+		// i:= ct.Random.Intn(9)+1
+		t := time.Now()
+		// for j:=0;j<i;j++{
+			// time.Sleep(time.Duration(ct.Random.Intn(1000))*time.Millisecond)
+			// Message(ct.Websocket, s, strconv.Itoa(j*100/i)+"%")
+		// }
+		Message(ct.Websocket, s, "Done. ("+strconv.Itoa(int(time.Duration(time.Since(t))))+"ms)")
+	}, "Permet d'interprêter n'importe quel language/langue en un temps record.", "")
 	marcy.Handler("rex", func(ct *CT, s Slack.OMNI) {
 		Message(ct.Websocket, s, "REX!")
 		Message(ct.Websocket, s, "!calme toi")
