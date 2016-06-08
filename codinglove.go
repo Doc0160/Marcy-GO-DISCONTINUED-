@@ -1,9 +1,10 @@
 package main
 import (
 	"math/rand"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	"strings"
 	"time"
+	"bytes"
 	"golang.org/x/net/html"
 )
 func codinglove(ct *CT, s Slack.OMNI) {
@@ -17,12 +18,12 @@ func codinglove(ct *CT, s Slack.OMNI) {
 		grab_title2 bool = false
 		// err   error
 	)
-	r, err := commonHttpRequest(ct, "http://thecodinglove.com/random")
+	buf, err := commonHTTPRequest(ct,"http://thecodinglove.com/random")
 	if err != nil {
 		Message(ct.Websocket, s, "Y'a une couille dans le paté !\n"+err.Error())
 	} else {
 		func() {
-			z := html.NewTokenizer(*r)
+			z := html.NewTokenizer(bytes.NewReader(buf))
 			for {
 				tt := z.Next()
 				switch {
@@ -61,7 +62,6 @@ func codinglove(ct *CT, s Slack.OMNI) {
 					}
 				}
 			}
-			(*r).Close()
 		}()
 	}
 }
@@ -75,12 +75,12 @@ func joieducode(ct *CT, s Slack.OMNI) {
 		grab_title bool = false
 		// err   error
 	)
-	r, err := commonHttpRequest(ct, "http://lesjoiesducode.fr/random")
+	buf, err := commonHTTPRequest(ct,"http://lesjoiesducode.fr/random")
 	if err != nil {
 		Message(ct.Websocket, s, "Y'a une couille dans le paté !\n"+err.Error())
 	} else {
 		func() {
-			z := html.NewTokenizer(*r)
+			z := html.NewTokenizer(bytes.NewReader(buf))
 			for {
 				tt := z.Next()
 				switch {
@@ -115,7 +115,6 @@ func joieducode(ct *CT, s Slack.OMNI) {
 					}
 				}
 			}
-			(*r).Close()
 		}()
 	}
 }

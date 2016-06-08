@@ -1,29 +1,30 @@
 package main
 import (
 	// "fmt"
-	"github.com/Doc0160/Marcy/TinyJsonDB"
 	"encoding/json"
 	"net/http"
-	"github.com/Doc0160/Marcy/slack"
+	// "./TinyJsonDB"
+	"./slack"
 	"strconv"
 )
-func newXkcd(tjdb *TinyJsonDB.TinyJsonDB, ct *CT) *XKCD {
+func newXkcd(/*tjdb *TinyJsonDB.TinyJsonDB,*/ ct *CT) *XKCD {
 	x := XKCD{
 		Last: 1677,
-		TJDB: tjdb,
+		// TJDB: tjdb,
 	}
-	go x.StoreLast(ct)
+	// go x.StoreLast(ct)
 	return &x
 }
 func (x *XKCD) StoreLast(ct *CT) {
 	var a XKCDcomic
-	r, err := commonHttpRequest(ct, "https://xkcd.com/info.0.json")
-	err = json.NewDecoder(*r).Decode(&a)
-	if !x.TJDB.IsSetTable("xkcd"){
-		x.TJDB.CreateTable("xkcd")
-	}
-	x.TJDB.Data["xkcd"]["last"] = a.Num
-	(*r).Close()
+	err := commonJsonRequest(ct, "https://xkcd.com/info.0.json", &a)
+	// r, err := commonHttpRequest(&ct.HTTPClient, "https://xkcd.com/info.0.json")
+	// err = json.NewDecoder(*r).Decode(&a)
+	// if !x.TJDB.IsSetTable("xkcd"){
+		// x.TJDB.CreateTable("xkcd")
+	// }
+	// x.TJDB.Data["xkcd"]["last"] = a.Num
+	// defer (*r).Close()
 	if err != nil {
 		// return a, err
 		return
@@ -38,15 +39,15 @@ func (x *XKCD) do_xkcd(ct *CT, s Slack.OMNI) {
 		var nb int
 		var err error
 		if len(e) == 1 {
-			nb = ct.Random.Intn(ct.TinyJsonDB.Data["xkcd"]["last"].(int))
+			nb = ct.Random.Intn(x.Last)
 			err = nil
 		} else {
 			nb, err = strconv.Atoi(e[1])
 		}
 		if err == nil {
 			if nb == -1 {
-				nb = ct.TinyJsonDB.Data["xkcd"]["last"].(int)
-				go x.StoreLast(ct)
+				nb = x.Last
+				// go x.StoreLast(ct)
 			}
 			Typing(ct.Websocket, s)
 			xc, err := x.xkcd(nb)
@@ -111,5 +112,5 @@ type XKCDcomic struct {
 }
 type XKCD struct {
 	Last int
-	TJDB *TinyJsonDB.TinyJsonDB
+	// TJDB *TinyJsonDB.TinyJsonDB
 }

@@ -1,8 +1,8 @@
 package main
 import (
-	"math/rand"
-	"github.com/Doc0160/Marcy/slack"
-	"time"
+	// "math/rand"
+	"./slack"
+	// "time"
 )
 var magic8 = []string{
 	"« Essaye plus tard »",
@@ -29,9 +29,8 @@ var magic8 = []string{
 	"« Impossible »",
 }
 func doMagic8ball(ct *CT, s Slack.OMNI){
-	rand.Seed(time.Now().Unix())
 	q := cut_cmd(s.Text)
-	var text = magic8[rand.Intn(len(magic8))]
+	var text = magic8[ct.Random.Intn(len(magic8))]
 	var att Slack.Attachment
 	att.Text = text
 	att.Fallback = text

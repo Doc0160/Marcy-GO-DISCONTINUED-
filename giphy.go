@@ -2,34 +2,27 @@ package main
 import(
 	// "math/rand"
 	// "time"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	// "fmt"
-	"encoding/json"
+	// "encoding/json"
 )
 func giphy(ct *CT, s Slack.OMNI){
 	var gs giphy_struct
-	var err error
 	s.Text = cut_cmd(s.Text)
 	temp := explode_cmd(s.Text)
 	if len(temp)==0{
 		Message(ct.Websocket, s, "Usage:\n>$g `something`")
 		return
 	}
-	s.Text = implode(temp, ";")
-	r, err := commonHttpRequest(ct, "https://api.giphy.com/v1/gifs/search?q="+s.Text+"&api_key=dc6zaTOxFJmzC")
+	s.Text = implode(temp, "+")
+	err := commonJsonRequest(ct, "https://api.giphy.com/v1/gifs/search?q="+s.Text+"&api_key=dc6zaTOxFJmzC", &gs)
 	if err != nil {
 		Message(ct.Websocket, s, "Paté: "+err.Error())
 	} else {
-		err := json.NewDecoder(*r).Decode(&gs)
-		defer (*r).Close()
-		if err != nil {
-			Message(ct.Websocket, s, "Paté: "+err.Error())
-		} else {
-			if len(gs.Data)>0{
-				Message(ct.Websocket, s, gs.Data[ct.Random.Intn(len(gs.Data))].Images.Original.URL)
-			}else{
-				Message(ct.Websocket, s, "-none found-")
-			}
+		if len(gs.Data)>0{
+			Message(ct.Websocket, s, gs.Data[ct.Random.Intn(len(gs.Data))].Images.Original.URL)
+		}else{
+			Message(ct.Websocket, s, "-none found-")
 		}
 	}
 }

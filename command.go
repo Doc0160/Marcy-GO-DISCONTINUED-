@@ -1,12 +1,14 @@
 package main
 import(
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 )
+type Commands map[string]Command
 type Command struct{
 	Command func(*CT, Slack.OMNI)
 	QHelp   string
 	Help    string
 	Alias   bool
+	Hidden  bool
 }
 func(c*Command)GetHelp()string{
 	return ""

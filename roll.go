@@ -1,6 +1,6 @@
 package main
 import(
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	"fmt"
 	"errors"
 	"strconv"

@@ -1,11 +1,11 @@
 package main
 import (
-	// "errors"
-	"io"
-	"net/http"
 	"strings"
 	"encoding/json"
 	"encoding/xml"
+	"io/ioutil"
+	"net/http"
+	// "fmt"
 )
 type(
 	RSSChannel struct {
@@ -95,25 +95,38 @@ func cut_cmd(cmd string)string {
 	}
 	return r
 }
-func commonHttpRequest(ct *CT, url string) (*io.ReadCloser, error) {
+
+func commonHTTPRequest(ct *CT, url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "I do things ? ... I'm a stupid slack bot ! (tristan.magniez@viacesi.fr)")
-	r, err := ct.Slack.Client.Do(req)
-	if err != nil {
-		return nil, err
-		//		Message(ct.Websocket, s, "Y'a une couille dans le paté !\n"+err.Error())
-	} else {
-		return &r.Body, err
-		//		r.Body.Close()
+	if err!= nil{
+		return nil,err
+	}else{
+		req.Header.Set("User-Agent", "I do things ? ... I'm a stupid slack bot ! (tristan.magniez@viacesi.fr)")
+		r, err := ct.Slack.Client.Do(req)
+		defer r.Body.Close()
+		if err != nil {
+			return nil, err
+		} else {
+			buf, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				return nil, err
+			} else {
+				return buf, nil
+			}
+		}
 	}
 }
 func commonJsonRequest(ct *CT, url string, o interface{})error{
-	r, err := commonHttpRequest(ct, url)
+	println(url)
+	buf, err := commonHTTPRequest(ct,url)
+	println("apres rq")
 	if err != nil {
 		return err
 	} else {
-		err := json.NewDecoder(*r).Decode(&o)
-		defer (*r).Close()
+		println("av dec")
+		// println(string(buf))
+		err := json.Unmarshal(buf, &o)
+		println("apres dec")
 		if err != nil {
 			return err
 		} else {
@@ -122,12 +135,15 @@ func commonJsonRequest(ct *CT, url string, o interface{})error{
 	}
 }
 func commonXMLRequest(ct *CT, url string, o interface{})error{
-	r, err := commonHttpRequest(ct, url)
+	println(url)
+	buf, err := commonHTTPRequest(ct,url)
+	println("apres rq")
 	if err != nil {
 		return err
 	} else {
-		err := xml.NewDecoder(*r).Decode(&o)
-		defer (*r).Close()
+		println("av dec")
+		err := xml.Unmarshal(buf, &o)
+		println("apres dec")
 		if err != nil {
 			return err
 		} else {
@@ -135,7 +151,6 @@ func commonXMLRequest(ct *CT, url string, o interface{})error{
 		}
 	}
 }
-
 func reverseString(input string) string {
 	// Get Unicode code points.
 	n := 0

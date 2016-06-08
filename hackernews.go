@@ -1,13 +1,17 @@
 package main
 import(
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	// "fmt"
 )
 func hn(ct *CT, s Slack.OMNI){
 	var a RSSChannel
 	var f []Slack.Attachment
 	Typing(ct.Websocket,s)
-	commonXMLRequest(ct, "https://news.ycombinator.com/rss", &a)
+	err := commonXMLRequest(ct, "https://news.ycombinator.com/rss", &a)
+	if err != nil {
+		Message(ct.Websocket, s, "Y'a une couille dans le paté !\n"+err.Error())
+		return
+	}
 	i:=0
 	for _,v := range a.Items.ItemList{
 		if i>10{
@@ -22,7 +26,7 @@ func hn(ct *CT, s Slack.OMNI){
 		i++
 	}
 	Typing(ct.Websocket,s)
-	_, err := ct.Slack.API_CALL("chat.postMessage", map[string]interface{}{
+	_, err = ct.Slack.API_CALL("chat.postMessage", map[string]interface{}{
 		"as_user":     "true",
 		"channel":     s.Channel,
 		"attachments": f,

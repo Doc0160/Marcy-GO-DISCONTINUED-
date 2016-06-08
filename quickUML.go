@@ -1,7 +1,7 @@
 package main
 import (
 	"net/url"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 )
 func qUML(ct *CT, s Slack.OMNI) {
 	e := explode_cmd(s.Text)

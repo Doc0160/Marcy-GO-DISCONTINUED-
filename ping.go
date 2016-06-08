@@ -3,13 +3,9 @@ package main
 import (
 	"fmt"
 	"runtime/debug"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	// "golang.org/x/net/websocket"
 )
-
-func default1(ct *CT, s Slack.OMNI) {
-	Message(ct.Websocket, s, "Ye ne té comprends pas dins ce qué tû dis !!!\nPour avoir la liste des commandes:\n>`$h`")
-}
 func ping(ct *CT, s Slack.OMNI) {
 	Message(ct.Websocket, s, "Pong !")
 }

@@ -2,7 +2,7 @@ package main
 import (
 	// "fmt"
 	URL "net/url"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	"strconv"
 )
 var meme_templates = map[string]string{

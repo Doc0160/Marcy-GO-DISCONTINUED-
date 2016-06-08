@@ -2,7 +2,7 @@ package main
 
 import (
 	"math/rand"
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	"time"
 	"strings"
 	// "strconv"

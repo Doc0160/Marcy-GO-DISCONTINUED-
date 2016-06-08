@@ -1,10 +1,6 @@
 package main
 import (
-	// "fmt"
-	// "time"
-	// "math/rand"
-	"github.com/Doc0160/Marcy/slack"
-	"encoding/json"
+	"./slack"
 )
 var perv_girls = []string{
 	"YogaPants",
@@ -25,56 +21,35 @@ var perv_boys = []string{
 	"hardbodiesmale",
 	"malemodelsNSFW",
 }
-var PervGirlsCache StackString
-var PervMenCache StackString
-func get_reddit_one(ct *CT, reddit_perv []string, a *Reddit_Thread) (int, int) {
+func get_reddit_one(ct *CT, reddit_perv []string) (string, error) {
+	var a Reddit_Thread
 	randy := ct.Random.Intn(len(reddit_perv))
-	r, err := commonHttpRequest(ct, "https://www.reddit.com/r/"+reddit_perv[randy]+".json")
+	err := commonJsonRequest(ct, "https://www.reddit.com/r/"+reddit_perv[randy]+".json", &a)
 	if err != nil {
-		panic(err)
+		return "", err
 	} else {
-		err := json.NewDecoder(*r).Decode(&a)
-		defer (*r).Close()
-		if err != nil {
-			panic(err)
-		} else {
-			randy2 := ct.Random.Intn(len(a.Data.Children))
-			return randy, randy2
-		}
+		return a.Data.Children[ct.Random.Intn(len(a.Data.Children))].Data.Preview.Images[0].Source.URL, nil
 	}
 }
-func common_perv(ct *CT, s Slack.OMNI, reddit_perv []string, c *StackString) {
+func common_perv(ct *CT, s Slack.OMNI, reddit_perv []string) {
 	if _,v:=ct.Slack.GetNameById(s.Channel);v == "general" {
 		Message(ct.Websocket, s, "Pas dans le chan general, pervers !")
 		return
 	}
-	if c.Size()==0{
-		var a Reddit_Thread
-		Typing(ct.Websocket, s)
-		_, randy2 := get_reddit_one(ct, reddit_perv, &a)
-		Typing(ct.Websocket, s)
-		Message(ct.Websocket, s, a.Data.Children[randy2].Data.Preview.Images[0].Source.URL)
-	}else{
-		a, _ := c.Pop()
-		Message(ct.Websocket, s, a)
+	Typing(ct.Websocket, s)
+	img, err := get_reddit_one(ct, reddit_perv)
+	if err!=nil{
+		Message(ct.Websocket, s, err.Error())
+		return
 	}
-	if c.Size()==0{
-		PervPreload(10, reddit_perv, ct, c)
-	}
-}
-func PervPreload(x int, reddit_perv []string, ct *CT, c *StackString){
-	//var err error
-	for c.Size()<x{
-		var a Reddit_Thread
-		_, randy2 := get_reddit_one(ct, reddit_perv, &a)
-		c.Push(a.Data.Children[randy2].Data.Preview.Images[0].Source.URL)
-	}
+	Typing(ct.Websocket, s)
+	Message(ct.Websocket, s, img)
 }
 func perv(ct *CT, s Slack.OMNI) {
-	common_perv(ct, s, perv_girls, &PervGirlsCache)
+	common_perv(ct, s, perv_girls)
 }
 func perv_get_boys(ct *CT, s Slack.OMNI) {
-	common_perv(ct, s, perv_boys, &PervMenCache)
+	common_perv(ct, s, perv_boys)
 }
 // TODO(doc): reduce that ... thing
 type Reddit_Thread struct {
@@ -141,12 +116,12 @@ type Reddit_Thread struct {
 				Name            string        `json:"name"`
 				Created         float64       `json:"created"`
 				URL             string        `json:"url"`
-				// AuthorFlairText interface{}   `json:"author_flair_text"`
+				AuthorFlairText interface{}   `json:"author_flair_text"`
 				Title           string        `json:"title"`
 				CreatedUtc      float64       `json:"created_utc"`
 				Distinguished   interface{}   `json:"distinguished"`
-				// ModReports      []interface{} `json:"mod_reports"`
-				// NumReports      interface{}   `json:"num_reports"`
+				ModReports      []interface{} `json:"mod_reports"`
+				NumReports      interface{}   `json:"num_reports"`
 				Ups             int           `json:"ups"`
 			} `json:"data"`
 		} `json:"children"`

@@ -1,13 +1,18 @@
 package main
 import (
-	"github.com/Doc0160/Marcy/slack"
+	"./slack"
 	"time"
 	"strconv"
 )
 func main() {
-	marcy := NewMarcy("key", "doc0160")
+	marcy := NewMarcy("key", "doc0160", "marcy")
 	//
-	var xkcd = newXkcd(marcy.CT.TinyJsonDB, &marcy.CT)
+	var xkcd = newXkcd(/*marcy.CT.TinyJsonDB,*/ &marcy.CT)
+	marcy.Handler("loreo", loreo, "", "");
+	marcy.Handler("b64", base64, "base64 string encoder", "");
+	marcy.Handler("unb64", unbase64, "base64 string decoder", "");
+	marcy.Handler("hex", hex, "hex string encoder", "");
+	marcy.Handler("unhex", unhex, "hex string decoder", "");
 	marcy.Handler("g", giphy, "giphy", "");
 	marcy.Handler("unflip", unflip, "", "");
 	marcy.Handler("flip", flip, "", "");
@@ -15,11 +20,10 @@ func main() {
 	marcy.Handler("debug", doDebug, "debug", "debug")
 	marcy.Handler("xkcd", xkcd.do_xkcd, "XKCD !", "")
 	marcy.Handler("timestamp", timestamp, "", "")
-	marcy.Handler("pokedex", do_pkdx, "Pokemon !", "")
-	marcy.Alias("pkdx", "pokedex")
 	marcy.Handler("perv", perv, "Pervers", "")
-	marcy.Alias("girl", "perv")
-	marcy.Alias("girls", "perv")
+	marcy.AliasMulti([]string{"girl","girls"}, "perv")
+	// marcy.Alias("girl", "perv")
+	// marcy.Alias("girls", "perv")
 	marcy.Handler("bonlundi", perv_get_boys, "Perverse", "")
 	marcy.Alias("needboys", "bonlundi")
 	marcy.Alias("boy", "bonlundi")
@@ -57,12 +61,7 @@ func main() {
 		Message(ct.Websocket, s, "MAIS CH'UIS PAS UN CHIEN MOI !\n_(tu peux gratter un peu plus vers la droite ?)_")
 	}, "", "")
 	marcy.Handler("compute", func(ct *CT, s Slack.OMNI) {
-		// i:= ct.Random.Intn(9)+1
 		t := time.Now()
-		// for j:=0;j<i;j++{
-			// time.Sleep(time.Duration(ct.Random.Intn(1000))*time.Millisecond)
-			// Message(ct.Websocket, s, strconv.Itoa(j*100/i)+"%")
-		// }
 		Message(ct.Websocket, s, "Done. ("+strconv.Itoa(int(time.Duration(time.Since(t))))+"ms)")
 	}, "Permet d'interprêter n'importe quel language/langue en un temps record.", "")
 	marcy.Handler("rex", func(ct *CT, s Slack.OMNI) {
